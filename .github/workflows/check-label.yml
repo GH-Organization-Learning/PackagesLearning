@@ -30,6 +30,8 @@ jobs:
         id: filter-labels
         run: |
 
+          echo "$labels"
+
           filteredLabels=$(echo "$labels" | jq -r 'map(select(startswith("Deploy - ")))')
 
           echo "Deploy labels: $filteredLabels"          
