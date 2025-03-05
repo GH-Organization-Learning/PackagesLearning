@@ -26,6 +26,6 @@ jobs:
 
           echo "Pull request labels: $labels"
 
-          filteredLabels=$( $labels | jq -r 'map(select(startswith("Deploy - ")))')
+          filteredLabels=$(echo "$labels" | jq -r 'map(select(startswith("Deploy - ")))')
 
           echo "Deploy labels: $filteredLabels"          
