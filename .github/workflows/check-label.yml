@@ -38,6 +38,22 @@ jobs:
           elif [ $(echo "$filteredLabels" | jq length) -gt 1 ]; then
             echo "More than one deploy label selected."
             deployIsValid=false
+          else 
+            lib=$(echo "$filteredLabels" | jq -r '.[0]' | sed 's/^Deploy - //')
+            echo "lib=$lib" >> $GITHUB_ENV
           fi
 
           echo "deployIsValid=$deployIsValid" >> $GITHUB_ENV
+
+      - name: Handle Labels Validation
+        run: |
+          if [[ "$deployIsValid" == "false" ]]; then
+            gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "## **❌ Deploy Lib Invalid ❌**
+            You should select **one** _Deploy_ label to update the library."
+            exit 1
+          else
+            gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "## **✅ Deploy Lib Valid ✅**.
+            By merging this Pull Request you will update $lib library."
+          fi
+        env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
