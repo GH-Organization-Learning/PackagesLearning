@@ -25,13 +25,14 @@ jobs:
             | jq -r '.labels // [] | map(.name)')
 
           echo "Pull request labels: $labels"
+          echo "labels=$labels" >> $GITHUB_ENV
 
       - name: Filter Deploy Labels
         id: filter-labels
         run: |
 
-          echo "$labels"
+          echo "env.labels"
 
-          filteredLabels=$(echo "$labels" | jq -r 'map(select(startswith("Deploy - ")))')
+          filteredLabels=$(echo env.labels | jq -r 'map(select(startswith("Deploy - ")))')
 
           echo "Deploy labels: $filteredLabels"          
