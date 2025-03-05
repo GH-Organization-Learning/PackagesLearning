@@ -12,8 +12,8 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Analyse Labels
-        id: get-labels
+      - name: Check Labels
+        id: check-labels
         run: |
 
           PR_NUMBER=${{ github.event.pull_request.number }}
@@ -28,4 +28,16 @@ jobs:
 
           filteredLabels=$(echo "$labels" | jq -r 'map(select(startswith("Deploy - ")))')
 
-          echo "Deploy labels: $filteredLabels"          
+          echo "Deploy labels: $filteredLabels"
+
+          deployIsValid=true
+
+          if [ -z "$filteredLabels" ]; then
+            echo "No deploy label selected."
+            deployIsValid=false
+          elif [$(echo "$filteredLabels" | jq length) -gt 1]; then
+            echo "More than one deploy label selected."
+            deployIsValid=false
+          fi
+
+          echo "deployIsValid=$deployIsValid" >> $GITHUB_ENV
