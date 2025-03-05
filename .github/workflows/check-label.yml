@@ -19,6 +19,6 @@ jobs:
         
           labels=$(curl -s -H "Authorization: token $TOKEN" \
             "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER" \
-            | jq -r '[.labels | map(.name)]')
+            | jq -r '.labels')
 
           echo "Labels found: $labels"
