@@ -1,9 +1,11 @@
 name: Publish package to GitHub Packages
+
 on:
   pull_request:
     types: [closed]
     branches:
       - main
+
 jobs:
   publish:
     if: github.event.pull_request.merged == true
@@ -27,8 +29,12 @@ jobs:
           labels=$(curl -s -H "Authorization: token $TOKEN" \
             "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER" \
             | jq -r '.labels // [] | map(.name)')
+
+           echo "Pull request labels: $labels"
         
           filteredLabels=$(echo "$labels" | jq -r 'map(select(startswith("Deploy - ")))')
+
+          echo "Deploy labels: $filteredLabels"
 
           lib=$(echo "$filteredLabels" | jq -r '.[0]' | sed 's/^Deploy - //')
           
@@ -36,7 +42,7 @@ jobs:
           
       - name: Publish package
         run: |
-          cd ./$lib
+          cd ./"$lib"
           mvn --batch-mode deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
