@@ -12,7 +12,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Get Labels
+      - name: Analyse Labels
         id: get-labels
         run: |
 
@@ -22,17 +22,10 @@ jobs:
         
           labels=$(curl -s -H "Authorization: token $TOKEN" \
             "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER" \
-            | jq -r '.labels // [] | map(.name)')
+            | jq -r '.labels // [] | map(.name) | join(",")')
 
           echo "Pull request labels: $labels"
-          echo "labels=$labels" >> $GITHUB_ENV
 
-      - name: Filter Deploy Labels
-        id: filter-labels
-        run: |
-
-          echo "${{ env.labels }}"
-
-          filteredLabels=$(echo ${{ env.labels }} | jq -r 'map(select(startswith("Deploy - ")))')
+          filteredLabels=$( $labels | jq -r 'map(select(startswith("Deploy - ")))')
 
           echo "Deploy labels: $filteredLabels"          
