@@ -31,8 +31,8 @@ jobs:
         id: filter-labels
         run: |
 
-          echo "{{ env.labels }}"
+          echo "${{ env.labels }}"
 
-          filteredLabels=$(echo {{ env.labels }} | jq -r 'map(select(startswith("Deploy - ")))')
+          filteredLabels=$(echo ${{ env.labels }} | jq -r 'map(select(startswith("Deploy - ")))')
 
           echo "Deploy labels: $filteredLabels"          
