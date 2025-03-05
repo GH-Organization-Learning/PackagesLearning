@@ -53,7 +53,7 @@ jobs:
             exit 1
           else
             gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "## **✅ Deploy Lib Valid ✅**.
-            By merging this Pull Request you will update $lib library."
+            By merging this Pull Request you will update **$lib** library."
           fi
         env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
