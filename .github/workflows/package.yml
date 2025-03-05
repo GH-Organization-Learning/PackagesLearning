@@ -23,11 +23,14 @@ jobs:
           PR_NUMBER=${{ github.event.pull_request.number }}
           REPO=${{ github.repository }}
           TOKEN=${{ secrets.GITHUB_TOKEN }}
-        
-          lib=$(curl -s -H "Authorization: token $TOKEN" \
+
+          labels=$(curl -s -H "Authorization: token $TOKEN" \
             "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER" \
-            | jq -r '.labels // [] | map(.name) | map(select(startswith("Deploy - "))) | .[0]' \
-            | sed 's/^Deploy - //')
+            | jq -r '.labels // [] | map(.name)')
+        
+          filteredLabels=$(echo "$labels" | jq -r 'map(select(startswith("Deploy - ")))')
+
+          lib=$(echo "$filteredLabels" | jq -r '.[0]' | sed 's/^Deploy - //')
           
           echo "lib=$lib" >> $GITHUB_ENV
           
