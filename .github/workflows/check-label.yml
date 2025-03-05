@@ -49,7 +49,7 @@ jobs:
         run: |
           if [[ "$deployIsValid" == "false" ]]; then
             gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "## **❌ Deploy Lib Invalid ❌**
-            You should select **one** _Deploy_ label to update the library."
+            You should select **ONE** Deploy label to update the library."
             exit 1
           else
             gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "## **✅ Deploy Lib Valid ✅**.
