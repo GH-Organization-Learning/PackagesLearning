@@ -1,12 +1,13 @@
 name: Publish package to GitHub Packages
-
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
       - main
 
 jobs:
   publish:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -23,23 +24,15 @@ jobs:
           PR_NUMBER=${{ github.event.pull_request.number }}
           REPO=${{ github.repository }}
           TOKEN=${{ secrets.GITHUB_TOKEN }}
-
-          labels=$(curl -s -H "Authorization: token $TOKEN" \
-            "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER")
-
-           echo "$labels"
         
-          filteredLabels=$(echo "$labels" | jq -r 'map(select(startswith("Deploy - ")))')
-
-          echo "Deploy labels: $filteredLabels"
-
-          lib=$(echo "$filteredLabels" | jq -r '.[0]' | sed 's/^Deploy - //')
+          lib=$(curl -s -H "Authorization: token $TOKEN" \
+            "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER")
           
-          echo "lib=$lib" >> $GITHUB_ENV
+          echo "$lib"
           
       - name: Publish package
         run: |
-          cd ./"$lib"
+          cd ./$lib
           mvn --batch-mode deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
