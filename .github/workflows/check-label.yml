@@ -21,6 +21,7 @@ jobs:
           TOKEN=${{ secrets.GITHUB_TOKEN }}
         
           labels=$(curl -s -H "Authorization: token $TOKEN" \
-            "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER")
+            "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER" \
+            | jq -r '[.labels // [] | map(.name)]')
 
           echo "Labels found: $labels"
