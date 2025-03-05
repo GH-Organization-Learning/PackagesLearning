@@ -22,7 +22,7 @@ jobs:
         
           labels=$(curl -s -H "Authorization: token $TOKEN" \
             "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER" \
-            | jq -r '[.labels // [] | map(.name)]')
+            | jq -r '.labels // [] | map(.name)')
 
           echo "Pull request labels: $labels"
 
@@ -32,6 +32,4 @@ jobs:
 
           filteredLabels=$(echo "$labels" | jq -r 'map(select(startswith("Deploy - ")))')
 
-          echo "Deploy labels: $filteredLabels"
-          echo "filteredLabels=$filteredLabels" >> $GITHUB_ENV
-          
+          echo "Deploy labels: $filteredLabels"          
