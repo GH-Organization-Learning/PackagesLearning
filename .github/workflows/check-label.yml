@@ -12,8 +12,8 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Check Labels
-        id: check-labels
+      - name: Get Labels
+        id: get-labels
         run: |
 
           PR_NUMBER=${{ github.event.pull_request.number }}
@@ -24,4 +24,14 @@ jobs:
             "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER" \
             | jq -r '[.labels // [] | map(.name)]')
 
-          echo "Labels found: $labels"
+          echo "Pull request labels: $labels"
+
+      - name: Filter Deploy Labels
+        id: filter-labels
+        run: |
+
+          filteredLabels=$(echo "$labels" | jq -r 'map(select(startswith("Deploy - ")))')
+
+          echo "Deploy labels: $filteredLabels"
+          echo "filteredLabels=$filteredLabels" >> $GITHUB_ENV
+          
