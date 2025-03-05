@@ -15,9 +15,18 @@ jobs:
         with:
           java-version: '21'
           distribution: 'zulu'
+      - name: Get Updated API
+        run: |
+          lib=$(curl -s -H "Authorization: token $TOKEN" \
+            "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER" \
+            | jq -r '.labels // [] | map(.name)' \
+            | 'map(select(startswith("Deploy - ")))' \
+            | '.[0]' \
+            | sed 's/^Deploy - //')
+          echo "lib=$lib" >> $GITHUB_ENV
       - name: Publish package
         run: |
-          cd ./TestEnum
+          cd ./$lib
           mvn --batch-mode deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
