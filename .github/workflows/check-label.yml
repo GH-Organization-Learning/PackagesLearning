@@ -32,7 +32,7 @@ jobs:
 
           deployIsValid=true
 
-          if [ -z "$filteredLabels" ]; then
+          if [ "$filteredLabels" == "[]" ]; then
             echo "No deploy label selected."
             deployIsValid=false
           elif [$(echo "$filteredLabels" | jq length) -gt 1]; then
