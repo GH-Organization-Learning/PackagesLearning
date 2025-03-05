@@ -35,7 +35,7 @@ jobs:
           if [ "$filteredLabels" == "[]" ]; then
             echo "No deploy label selected."
             deployIsValid=false
-          elif [$(echo "$filteredLabels" | jq length) -gt 1]; then
+          elif [ $(echo "$filteredLabels" | jq length) -gt 1 ]; then
             echo "More than one deploy label selected."
             deployIsValid=false
           fi
